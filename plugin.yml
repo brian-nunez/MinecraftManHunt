@@ -1,0 +1,8 @@
+name: ManHunt
+main: com.bjnunez.manhunt.Main
+version: 0.0.1
+api-version: 1.16
+commands:
+  manhunt:
+    description: Allows you to host a man hunt event
+    usage: /manhunt <playername> <start|stop>
