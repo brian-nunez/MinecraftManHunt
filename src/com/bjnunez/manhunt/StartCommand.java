@@ -18,7 +18,7 @@ public class StartCommand implements CommandExecutor {
   @Override
   public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] commandArgs) {
      if (commandArgs.length == 0) {
-       sender.sendMessage(ChatColor.RED + "Usage /manhunt <playername> <start|stop>");
+      sender.sendMessage(ChatColor.RED + "Usage /manhunt <start|stop> <playername>");
        return true;
      }
      
@@ -32,14 +32,14 @@ public class StartCommand implements CommandExecutor {
          stopEvent(player);
          break;
        default:
-         sender.sendMessage(ChatColor.RED + "Usage /manhunt <playername> <start|stop>");
+         sender.sendMessage(ChatColor.RED + "Usage /manhunt <start|stop> <playername>");
      }
     
     return true;
   }
   
   private void startEvent(Player sender, String playerName) {
-    if (ManHuntEvent.isInProgress()) {
+    if (ManHuntEvent.getEvent().isInProgress()) {
       sender.sendMessage(ChatColor.RED + "Event in progess...");
       return;
     }
@@ -60,29 +60,29 @@ public class StartCommand implements CommandExecutor {
       return;
     }
     
-    ManHuntEvent.setHuntedPlayer(huntedPlayer);
+    ManHuntEvent.getEvent().setHuntedPlayer(huntedPlayer);
     
     Collection<? extends Player> hunterPlayers = plugin.getServer().getOnlinePlayers();
     
     hunterPlayers.forEach(player -> {
-      if (player.getName().equals(ManHuntEvent.getHuntedPlayer().getName())) {
+      if (player.getName().equals(ManHuntEvent.getEvent().getHuntedPlayer().getName())) {
         return;
       }
       player
         .getInventory()
-        .addItem(ManHuntEvent.getEventCompass());
+        .addItem(ManHuntEvent.getEvent().getEventCompass());
     });
 
     plugin.getServer().broadcastMessage(ChatColor.GREEN + "Man Hunt started! Target player is " + ChatColor.GOLD + ChatColor.BOLD + huntedPlayer.getName());
   }
   
   private void stopEvent(Player sender) {
-    if (!ManHuntEvent.isInProgress()) {
+    if (!ManHuntEvent.getEvent().isInProgress()) {
       sender.sendMessage(ChatColor.RED + "Event is not in progress...");
       return;
     }
-    
-    ManHuntEvent.resetEvent();
+
+    ManHuntEvent.getEvent().resetEvent();
     
     plugin.getServer().broadcastMessage(ChatColor.RED + "Man Hunt was stopped by " + ChatColor.GOLD + sender.getName());
   }

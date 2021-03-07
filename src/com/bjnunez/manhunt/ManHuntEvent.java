@@ -10,14 +10,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class ManHuntEvent {
-  private static Player huntedPlayer;
-  private static String compassName = "Man Hunt Compass";
+  private static ManHuntEvent instance = new ManHuntEvent();
+  private Player huntedPlayer;
+  private String compassName = "Man Hunt Compass";
   
-  public static void resetEvent() {
-    ManHuntEvent.huntedPlayer = null;
+  private ManHuntEvent() {}
+  
+  public void resetEvent() {
+    this.huntedPlayer = null;
   }
   
-  private static ItemStack makeCompass(String playerName) {
+  public static ManHuntEvent getEvent() {
+    return instance;
+  }
+  
+  private ItemStack makeCompass(String playerName) {
     ItemStack compass = new ItemStack(Material.COMPASS);
     
     ItemMeta meta = compass.getItemMeta();
@@ -38,23 +45,23 @@ public class ManHuntEvent {
     return compass;
   }
   
-  public static boolean isInProgress() {
-    return ManHuntEvent.huntedPlayer != null;
+  public boolean isInProgress() {
+    return this.huntedPlayer != null;
   }
   
-  public static ItemStack getEventCompass() {
-    return ManHuntEvent.makeCompass(ManHuntEvent.huntedPlayer.getName());
+  public ItemStack getEventCompass() {
+    return this.makeCompass(this.huntedPlayer.getName());
   }
   
-  public static Player getHuntedPlayer() {
-    return ManHuntEvent.huntedPlayer;
+  public Player getHuntedPlayer() {
+    return this.huntedPlayer;
   }
   
-  public static void setHuntedPlayer(Player player) {
-    ManHuntEvent.huntedPlayer = player;
+  public void setHuntedPlayer(Player player) {
+    this.huntedPlayer = player;
   }
   
-  public static String getCompassName() {
-    return ManHuntEvent.compassName;
+  public String getCompassName() {
+    return this.compassName;
   }
 }

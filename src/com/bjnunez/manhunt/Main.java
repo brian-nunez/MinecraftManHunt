@@ -11,14 +11,13 @@ public class Main extends JavaPlugin {
     
     EventListener eventListener = new EventListener(this);
     
-    this.getCommand("manhunt").setExecutor(new StartCommand(this));
+    getCommand("manhunt").setExecutor(new StartCommand(this));
     
     pm.registerEvents(eventListener, this);
   }
 
   @Override
   public void onDisable() {
-    
+    getLogger().info("ManHunt Disabled");
   }
-  
 }

@@ -9,6 +9,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
 
 public class EventListener implements Listener {
   Main plugin;
@@ -20,11 +21,11 @@ public class EventListener implements Listener {
   @EventHandler
   public void onPlayerDeath(PlayerDeathEvent event) {
     Player player = event.getEntity();
-    Player huntedPlayer = ManHuntEvent.getHuntedPlayer();
+    Player huntedPlayer = ManHuntEvent.getEvent().getHuntedPlayer();
     
-    if (ManHuntEvent.isInProgress()) {
+    if (ManHuntEvent.getEvent().isInProgress()) {
       if (player.getName().equals(huntedPlayer.getName())) {
-        ManHuntEvent.resetEvent();
+        ManHuntEvent.getEvent().resetEvent();
         plugin.getServer().broadcastMessage(ChatColor.GREEN + "Hunters Win! " + ChatColor.GOLD + huntedPlayer.getName() + ChatColor.GREEN + " died!");
       }
     }
@@ -36,23 +37,27 @@ public class EventListener implements Listener {
       Action action = event.getAction();
       ItemStack item = event.getItem();
       
-      if (!ManHuntEvent.isInProgress()) {
+      if (!ManHuntEvent.getEvent().isInProgress()) {
         return;
       }
 
        if ( action.equals( Action.RIGHT_CLICK_AIR ) || action.equals( Action.RIGHT_CLICK_BLOCK ) ) {
-           if ( item != null && item.getType() == Material.COMPASS && item.getItemMeta().getDisplayName().contains(ManHuntEvent.getCompassName()) ) {
-               Player huntedPlayer = ManHuntEvent.getHuntedPlayer();
-               player.setCompassTarget(huntedPlayer.getLocation());
+           if ( item != null && item.getType() == Material.COMPASS && item.getItemMeta().getDisplayName().contains(ManHuntEvent.getEvent().getCompassName()) ) {
+               Player huntedPlayer = ManHuntEvent.getEvent().getHuntedPlayer();
                player.sendMessage(
                    ChatColor.AQUA +
-                   "Compass is now pointing to " +
+                   "Compass is pointing to " +
                    ChatColor.GOLD +
                    huntedPlayer.getName() +
                    ChatColor.AQUA +
                    " at Y: " +
                    huntedPlayer.getLocation().getY()
                );
+               CompassMeta compass = (CompassMeta) item.getItemMeta();
+               compass.setLodestoneTracked(false);
+               compass.setLodestone(huntedPlayer.getLocation());
+               
+               item.setItemMeta(compass);
            } 
        }
 
